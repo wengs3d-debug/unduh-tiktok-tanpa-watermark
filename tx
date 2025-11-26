@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Downloader - Tanpa Watermark</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg,#0d0d0d,#1f1f1f);
+        color: white;
+        text-align: center;
+        padding: 30px;
+    }
+    .card {
+        max-width: 420px;
+        margin: auto;
+        background: #111;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+    input {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        outline: none;
+        margin-top: 10px;
+        font-size: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 15px;
+        background: #ff0066;
+        border: none;
+        color: white;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    button:hover {
+        background: #ff3385;
+    }
+    video, img {
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 12px;
+    }
+    .download-btn {
+        display: block;
+        padding: 12px;
+        background: #0084ff;
+        margin-top: 10px;
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+    }
+    .download-btn:hover {
+        background: #339cff;
+    }
+</style>
+</head>
+<body>
+
+<h1>TikTok Downloader</h1>
+<p>Download Video Tanpa Watermark • MP4 • MP3 • Thumbnail</p>
+
+<div class="card">
+    <input id="tiktokUrl" type="text" placeholder="Tempel URL TikTok di sini...">
+    <button onclick="getDownload()">Download</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+async function getDownload() {
+    const url = document.getElementById("tiktokUrl").value.trim();
+    const result = document.getElementById("result");
+
+    if (!url) return alert("Masukkan URL TikTok!");
+
+    result.innerHTML = "<p>Memproses...</p>";
+
+    const api = `https://api.tiklydown.me/api/download?url=${encodeURIComponent(url)}`;
+
+    try {
+        const res = await fetch(api);
+        const data = await res.json();
+
+        if (!data.video) {
+            result.innerHTML = "<p>Gagal mengambil video.</p>";
+            return;
+        }
+
+        result.innerHTML = `
+            <video controls src="${data.video.noWatermark}"></video>
+
+            <a class="download-btn" href="${data.video.noWatermark}" download>
+                Download Video Tanpa Watermark
+            </a>
+
+            <a class="download-btn" href="${data.video.watermark}" download>
+                Download Video Dengan Watermark
+            </a>
+
+            <a class="download-btn" href="${data.music.play_url}" download>
+                Download Audio (MP3)
+            </a>
+
+            <img src="${data.cover}" alt="Thumbnail">
+
+            <a class="download-btn" href="${data.cover}" download>
+                Download Thumbnail
+            </a>
+        `;
+    } catch (e) {
+        result.innerHTML = "<p>Terjadi error saat memproses.</p>";
+    }
+}
+</script>
+
+</body>
+</html>
